@@ -1,24 +1,30 @@
 import pygame
-import constants as con
-import player
-import asteroid
-import asteroidfield
+from constants import *
+from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+from shot import Shot
 
 def main():
     pygame.init()
     print("Starting Asteroids!")
     clock = pygame.time.Clock()
     dt = 0
-    screen = pygame.display.set_mode((con.SCREEN_WIDTH, con.SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
-    asteroid.Asteroid.containers = (asteroids, updatable, drawable)
-    asteroidfield.AsteroidField.containers = (updatable, )
-    field = asteroidfield.AsteroidField()
-    player.Player.containers = (updatable, drawable)
-    ship = player.Player(x = con.SCREEN_WIDTH/2, y = con.SCREEN_HEIGHT/2)
-    
+    shots_group = pygame.sprite.Group()
+
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = (updatable, )
+    Player.containers = (updatable, drawable)
+    Shot.containers = (shots_group, updatable, drawable)
+
+    ship = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    field = AsteroidField()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -26,7 +32,6 @@ def main():
         updatable.update(dt)
         for obj in asteroids:
             if obj.collision_check(ship):
-                print("Collision detected!")
                 raise SystemExit("Game over!")
 
         screen.fill("black")
